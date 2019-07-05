@@ -1,0 +1,18 @@
+ - 실행전 환경설정:
+
+	http://chromedriver.chromium.org/downloads
+
+	위 url로 들어가서 본인 크롬버전에 맞는 ChromeDriver를 다운받는다
+	크롬 버전은 확인은 오른쪽 상단에 있는 설정(점점점 표시) -> 도움말 -> Chrome 정보를 누르면 확인할 수 있다.
+	다운받은 크롬 드라이버의 경로를 소스코드 상단에 있는 WEBDRIVER_PATH 에 넣어 준다
+
+ - 개수 설정 방법:
+
+	원하는 이미지 개수를 설정하려면 소스코드 상단에 있는 IMG_COUNT 의 숫자를 변경한다
+
+ - 실행 방법:
+
+	python3 imgCrawler.py -name <검색어>
+
+	예:
+	python3 imgCrawler.py -name 신호등
