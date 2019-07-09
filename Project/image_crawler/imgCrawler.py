@@ -58,7 +58,7 @@ def main():
     }
     #url 요청 파싱값
     html_object = req.get(url_info, params) #html_object html source 값
-    driver = webdriver.Chrome(webdriver)
+    driver = webdriver.Chrome(WEBDRIVER_PATH)
     driver.get(html_object.url)
 
     # 버튼 나올때까지 스크롤 다운
