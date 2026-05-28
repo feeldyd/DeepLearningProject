@@ -1,6 +1,10 @@
 name: Create migration repositories
 on:
   workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/create-migration-repos.yml'
 
 permissions:
   contents: write
