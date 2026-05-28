@@ -1,0 +1,52 @@
+name: Create migration repositories
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/create-migration-repos.yml'
+
+permissions:
+  administration: write
+  contents: read
+
+jobs:
+  create-repos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create private repositories on feeldyd
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repos = [
+              'a2a-smallsystem', 'Admin-Platform', 'admin-platform-common-pkg', 'admin_safeguard',
+              'agentgo-admin', 'agentgo-agents', 'agentgo-airflow', 'agentgo-analysis', 'agentgo-ci',
+              'agentgo-design-system', 'agentgo-gitops', 'agentgo-guardrail', 'agentgo-manage',
+              'agentgo-platform', 'agentgo-remote-agents', 'agentgo-service', 'agentgo-tax-admin',
+              'agentgo-tax-agents', 'agentgo-tax-airflow', 'agentgo-tax-manage',
+              'agentgo-tax-remote-agents', 'agentgo-tax-service', 'agentGoDevDesign',
+              'AgentGo_admin_dev_3.0', 'AgentGo_Chatbot_Version', 'Airflow', 'assistant-tool-mall',
+              'common', 'common_code', 'figma-admin-platform', 'Hivi-Platform', 'huons-admin',
+              'huons-agents', 'huons-manage', 'huons-platform', 'huons-remote-agents', 'huons-service',
+              'IntelliCEN-Gov', 'internal-remote-agents', 'Keycloak_login', 'keycloak_test',
+              'pns-dashboard', 'prepai-agents', 'prepai-airflow', 'prepai-cd', 'prepai-ci',
+              'prepai-gitops', 'prepai-platform', 'prepai-remote-agents', 'prepai-service',
+              'Prometheus', 'redmine-x-ck-editor', 'was_log_analysis'
+            ];
+            for (const name of repos) {
+              try {
+                await github.rest.repos.createForAuthenticatedUser({
+                  name,
+                  private: true,
+                  auto_init: false,
+                });
+                core.info(`Created: ${name}`);
+              } catch (error) {
+                if (error.status === 422) {
+                  core.info(`Already exists: ${name}`);
+                } else {
+                  core.setFailed(`Failed on ${name}: ${error.message}`);
+                  throw error;
+                }
+              }
+            }
