@@ -1,14 +1,9 @@
 name: Create migration repositories
 on:
   workflow_dispatch:
-  push:
-    branches: [master]
-    paths:
-      - '.github/workflows/create-migration-repos.yml'
 
 permissions:
-  administration: write
-  contents: read
+  contents: write
 
 jobs:
   create-repos:
@@ -33,6 +28,7 @@ jobs:
               'prepai-gitops', 'prepai-platform', 'prepai-remote-agents', 'prepai-service',
               'Prometheus', 'redmine-x-ck-editor', 'was_log_analysis'
             ];
+            let created = 0, exists = 0, failed = 0;
             for (const name of repos) {
               try {
                 await github.rest.repos.createForAuthenticatedUser({
@@ -40,13 +36,19 @@ jobs:
                   private: true,
                   auto_init: false,
                 });
-                core.info(`Created: ${name}`);
+                console.log(`Created: ${name}`);
+                created++;
               } catch (error) {
                 if (error.status === 422) {
-                  core.info(`Already exists: ${name}`);
+                  console.log(`Already exists: ${name}`);
+                  exists++;
                 } else {
-                  core.setFailed(`Failed on ${name}: ${error.message}`);
-                  throw error;
+                  console.log(`Failed: ${name} - ${error.message}`);
+                  failed++;
                 }
               }
+            }
+            console.log(`Summary: created=${created} exists=${exists} failed=${failed}`);
+            if (failed > 0) {
+              core.setFailed(`${failed} repositories could not be created`);
             }
